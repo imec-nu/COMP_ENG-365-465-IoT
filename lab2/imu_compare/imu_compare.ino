@@ -13,7 +13,7 @@ const uint16_t TARGET_HZ = 200; // Try 100, 200, 500, and 1000.
 const uint32_t SPI_CLOCK_HZ = 1000000;
 const uint32_t I2C_CLOCK_HZ = 400000;
 const bool WAIT_FOR_DATA_READY = true;
-const bool SHOW_VALUES = true; // Set false when measuring throughput.
+const bool SHOW_VALUES = true; // Print every completed read; set false for timing comparisons.
 
 #include "imu_compare_support.h"
 
