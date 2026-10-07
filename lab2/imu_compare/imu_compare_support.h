@@ -34,7 +34,6 @@ float rateFromCount(uint32_t count, uint32_t elapsedMs);
 
 SPISettings imuSpi(SPI_CLOCK_HZ, MSBFIRST, SPI_MODE3);
 RawSample latest = {};
-bool haveSample = false;
 uint32_t windowStartMs = 0;
 uint32_t completedReads = 0;
 uint32_t ioErrors = 0;
@@ -92,6 +91,39 @@ void stopWithMessage(const char *message) {
     Serial.println(message);
     delay(1000);
   }
+}
+
+bool beginImuBus() {
+  if (USE_SPI) {
+    pinMode(IMU_CS, OUTPUT);
+    digitalWrite(IMU_CS, HIGH);
+    SPI.begin(IMU_SCK, IMU_MISO, IMU_MOSI, IMU_CS);
+    return true;
+  }
+
+  if (!Wire.begin(I2C_SDA, I2C_SCL, I2C_CLOCK_HZ)) return false;
+  Wire.setTimeOut(20);
+  return true;
+}
+
+bool readStartupDeviceId(uint8_t &who) {
+  bool busReady = beginImuBus();
+  delay(150);
+
+  // Retry startup communication before stopping with an error.
+  const uint8_t maxAttempts = 8;
+  for (uint8_t attempt = 0; attempt < maxAttempts; ++attempt) {
+    if (busReady && readRegisters(REG_WHO_AM_I, &who, 1)) return true;
+    if (attempt + 1 == maxAttempts) break;
+
+    if (!USE_SPI) {
+      Wire.end();
+      delay(20);
+      busReady = beginImuBus();
+    }
+    delay(100);
+  }
+  return false;
 }
 
 bool configureImu() {
@@ -155,20 +187,9 @@ void setup() {
     stopWithMessage("Use SPI <= 1 MHz and I2C <= 400 kHz.");
   }
 
-  if (USE_SPI) {
-    pinMode(IMU_CS, OUTPUT);
-    digitalWrite(IMU_CS, HIGH);
-    SPI.begin(IMU_SCK, IMU_MISO, IMU_MOSI, IMU_CS);
-  } else {
-    Wire.begin(I2C_SDA, I2C_SCL);
-    Wire.setClock(I2C_CLOCK_HZ);
-    Wire.setTimeOut(20);
-  }
-  delay(150);
-
   uint8_t who = 0;
-  if (!readRegisters(REG_WHO_AM_I, &who, 1)) {
-    stopWithMessage("IMU read failed. Check wiring and TODO 2.1 or 2.2.");
+  if (!readStartupDeviceId(who)) {
+    stopWithMessage("IMU startup failed after 8 attempts. Check wiring and TODO 2.1 or 2.2.");
   }
   Serial.printf("WHO_AM_I = 0x%02X (MPU-6500: 0x70)\n", who);
   if (who != 0x70) {
@@ -208,20 +229,18 @@ void loop() {
     const uint32_t elapsedUs = micros() - startUs;
     if (ok) {
       decodeFrame(raw, latest);
-      haveSample = true;
       ++completedReads;
       totalReadUs += elapsedUs;
       if (elapsedUs > maxReadUs) maxReadUs = elapsedUs;
+      // Print this completed read before starting another one.
+      if (SHOW_VALUES) {
+        Serial.printf("raw A: %d %d %d | G: %d %d %d\n",
+                      latest.ax, latest.ay, latest.az, latest.gx, latest.gy, latest.gz);
+      }
     } else {
       ++ioErrors;
     }
   }
 
-  static uint32_t lastPrintMs = 0;
-  if (SHOW_VALUES && haveSample && millis() - lastPrintMs >= 100) {
-    lastPrintMs = millis();
-    Serial.printf("raw A: %d %d %d | G: %d %d %d\n",
-                  latest.ax, latest.ay, latest.az, latest.gx, latest.gy, latest.gz);
-  }
   reportWindow();
 }
