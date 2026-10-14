@@ -38,7 +38,7 @@ size_t readAudioFrame(int16_t *samples, size_t capacity) {
 void reportRms(float rms) {
   // Offer every frame so a short snap is visible during calibration.
   char line[48];
-  const int length = snprintf(line, sizeof(line), "RMS: %.1f\n", rms);
+  const int length = snprintf(line, sizeof(line), "RMS: %.3f\n", rms);
   if (length > 0 && Serial && Serial.availableForWrite() >= length) {
     Serial.write(reinterpret_cast<const uint8_t *>(line), length);
   }
