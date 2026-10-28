@@ -1,0 +1,16 @@
+This project uses lamejs 1.2.1 by Alex Zhukov, based on LAME and jump3r.
+Project: https://github.com/zhuker/lamejs
+LAME: https://lame.sourceforge.net/
+License: LGPL-3.0 (as declared by the upstream package.json).
+
+The JavaScript in lamejs.h is the unmodified upstream lame.min.js, embedded
+in a C++ raw string so the ESP32 can serve it without an SD card or Internet.
+It is served as a separate /lame.min.js asset. No npm install is required.
+
+Verified upstream revision: 582bbba6a12f981b984d8fb9e1874499fed85675
+Source and build scripts:
+https://github.com/zhuker/lamejs/tree/582bbba6a12f981b984d8fb9e1874499fed85675
+Trimmed JavaScript SHA-256:
+cfcba65b0fee8a4fc4494f7d6f4d35c53b62385e42bfe501c84833df04fbff31
+
+The original upstream license notice is in lamejs-UPSTREAM-LICENSE.txt.
