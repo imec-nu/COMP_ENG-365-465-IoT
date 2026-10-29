@@ -19,15 +19,16 @@ async function requestJpeg(signal) {
   throw new Error('Complete TODO 3.3.');
 }
 
+// PROVIDED SUPPORT CODE
+// Show the received photo and make it available through Download JPEG.
 function showPhoto(jpeg, filename) {
-  // TODO 3.4: YOUR CODE HERE
-  // Create an object URL for jpeg with URL.createObjectURL().
-  // Use the URL for photo.src and downloadBtn.href; set downloadBtn.download
-  // to filename. Save it in currentPhotoURL, then revoke the previous URL
-  // with URL.revokeObjectURL() if one exists. Keep the new URL for downloading.
-  // The code below calls this function when a photo arrives. The user clicks
-  // Download JPEG to save it; do not call downloadBtn.click() here.
-  throw new Error('Complete TODO 3.4.');
+  const nextURL = URL.createObjectURL(jpeg);
+  const previousURL = currentPhotoURL;
+  photo.src = nextURL;
+  downloadBtn.href = nextURL;
+  downloadBtn.download = filename;
+  currentPhotoURL = nextURL;
+  if (previousURL) URL.revokeObjectURL(previousURL);
 }
 
 // Provided: button events, error messages, and download controls.

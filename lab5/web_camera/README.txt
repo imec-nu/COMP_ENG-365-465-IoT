@@ -4,8 +4,8 @@ Open web_camera.ino. Set your group Wi-Fi name and password in config.h.
 Select XIAO_ESP32S3 and Tools > PSRAM > OPI PSRAM.
 The Sense camera plugs into the expansion board; this task needs no jumper wires or SD card.
 
-Student code: TODOs 3.1/3.2 are in web_camera.ino; 3.3/3.4 are in script.h.
-Camera setup, network setup, and the webpage layout are provided.
+Student code: TODOs 3.1/3.2 are in web_camera.ino; 3.3 is in script.h.
+Camera setup, network setup, webpage layout, and photo preview/download are provided.
 
 Upload, open Serial Monitor at 115200 baud, and connect your phone to the printed
 Wi-Fi network. Open the printed http:// address in a browser. Stay connected if

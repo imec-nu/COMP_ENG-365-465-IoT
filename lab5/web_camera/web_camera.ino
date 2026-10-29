@@ -1,4 +1,4 @@
-// Lab 5 Task 3. Complete TODOs 3.1/3.2 here and 3.3/3.4 in script.h.
+// Lab 5 Task 3. Complete TODOs 3.1/3.2 here and 3.3 in script.h.
 #include "camera_support.h"
 
 camera_fb_t *captureJpeg() {
