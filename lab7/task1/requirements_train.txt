@@ -1,0 +1,4 @@
+-r requirements_collect.txt
+tensorflow==2.16.1
+matplotlib==3.8.4
+keras==3.15.1

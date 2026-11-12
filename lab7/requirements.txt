@@ -1,0 +1,2 @@
+-r task1/requirements_train.txt
+-r task2/requirements_train.txt
